@@ -25,7 +25,7 @@ def args_parser():
                         help='negative sampling is performed outside n-hops of the target nodes')
 
     # model setting
-    parser.add_argument('--dim', default=128, type=int, help='number of embedding dimensions, default=128')
+    parser.add_argument('--dim', default=32, type=int, help='number of embedding dimensions, default=128')
     parser.add_argument('--epoch', default=100, type=int, help='default=100')
     parser.add_argument('--print_epoch', default=10, type=int)
     parser.add_argument('--lr', default=0.7, type=float, help='default=0.7')
@@ -68,16 +68,18 @@ def print_params(mdl):
 
 def run(args):
     edges, adj_lists, adj_array, features_array, labels = load_data(args.data_dir, args.dataset, normalized=args.normalized)
+
+    print("labels:",labels)
     features = nn.Embedding(features_array.shape[0], features_array.shape[1])
     features.weight = nn.Parameter(torch.FloatTensor(features_array), requires_grad=False)
 
     if args.cuda:
         features = features.cuda()
-    
+
     model = infomaxANE(adj_lists, adj_array, features, args)
     print_params(model)
     optimizer = torch.optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
-    
+
     if args.cuda:
         model.cuda()
 
@@ -112,10 +114,10 @@ def run(args):
 
 if __name__ == '__main__':
     args = args_parser()
-    random.seed(args.seed)
-    np.random.seed(args.seed)
-    torch.manual_seed(args.seed)
-    
+    # random.seed(args.seed)
+    # np.random.seed(args.seed)
+    # torch.manual_seed(args.seed)
+
     cuda_gpu = torch.cuda.is_available()
     if cuda_gpu:
         print('cuda is available!')

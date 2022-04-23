@@ -7,6 +7,7 @@ from sklearn.metrics import f1_score, accuracy_score
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn import preprocessing
 from collections import defaultdict, Counter
+from sklearn import metrics
 
 import warnings
 warnings.simplefilter("ignore", UserWarning)
@@ -121,4 +122,5 @@ def cluster(embs, labels):
                 while pred_group in label2group[label]:
                     label2group[label].remove(pred_group)
     print('node clustering acc:{:.4f}'.format(correct_nums/len(labels)))
+    print('node clustering NMI:',metrics.normalized_mutual_info_score(labels[:,1],y_pred))
 
